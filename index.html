@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
+  <title>SALT
+  </title>
+  <meta name="generator" content="Jekyll v3.9.0">
+  <meta property="og:title" content="SALT">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+  <!-- End Jekyll SEO tag -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-new-gr-c-s-check-loaded="14.1001.0" data-gr-ext-installed="">
+  <section class="page-header">
+    <h1 class="project-name">SALT: Distinguishable Speaker Anonymization Through Latent Space Transformation</h1>
+    <h3>Yuanjun Lv, Jixun Yao, Peikun Chen, Hongbin Zhou, Heng Lu, Lei Xie</h3>
+    <h2 class="project-tagline">Audio, Speech and Language Processing Group (ASLP@NPU)</br>School of Computer Science, Northwestern Polytechnical University, Xi'an, China</h2>
+    <h2 class="project-tagline">Ximalaya Inc., China</h2>
+
+  </section>
+
+  <section class="main-content">
+
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#Anon">Demos - Anonymization</a></li>
+      <li><a href="#Accent">Demos - Accent Preservation</a></li>
+    </ol>
+
+    <br><br>
+    <h2 id="abstract">1. Abstract<a name="abstract"></a></h2>
+    <p>Speaker anonymization aims to conceal a speaker's identity without degrading speech quality and intelligibility. Most speaker anonymization systems disentangle the speaker representation from the original speech and achieve anonymization by averaging or modifying the speaker representation. However, the anonymized speech is subject to reduction in pseudo speaker distinctiveness, speech quality and intelligibility for out-of-distribution speaker. To solve this issue, we propose SALT, a Speaker Anonymization system based on Latent space Transformation. Specifically, we extract latent features by a self-supervised feature extractor and randomly sample multiple speakers and their weights, and then interpolate the latent vectors to achieve speaker anonymization.  Meanwhile, we explore the extrapolation method to further extend the diversity of pseudo speakers. Experiments on Voice Privacy Challenge dataset show our system achieves a state-of-the-art distinctiveness metric while preserving speech quality and intelligibility.</p>
+
+    <center><img src='raw/fig/knnall.png'></center>
+    <br><br>
+
+
+    <h2>2. Demos -- Anonymization<a name="Anon"></a></h2>
+    <p>Corresponding to Section 4 in our paper, below lists the anonymized samples. We compare our proposed method (SALT) with the  VoicePrivacy Challenge offical basline system (B1.a) and the top rank system (NWPU-ASLP).</p>
+    <p>Our proposed model is denoted as [B or L]-Sx-Px, where B or L means WavLM-Base or WavLM-Large encoder, Sx means the scale factor s = x, Px means the preservation factor p = x.</p>
+
+    <table>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <h2>3. Demos -- Accent Preservation<a name="Accent"></a></h2>
+    <p>Corresponding to Section 4.1 in our paper, below lists the ASR results of some speech clips with obvious accents.</p>
+    <p>We notice that the recognition result of Whisper Large is usually better than U2++ in recognizing accented speech. We hypothesis that this is due to the accent robustness of the Whisper ASR model.</p>
+
+    <p>The text marked with <span style='color: red'>red colour</span> is the word with a strong accent.</p>
+
+    <table>
+      <tbody id="tbody2"></tbody>
+    </table>
+  </section>
+</body>
+
+</html>
+
+
+
+<script type="" text/javascript>
+  window.onload = function () {
+    console.log("load")
+    let anon_methods=['origin','baseline','vpc','base_scale0','base_scale1','base_scale0_preserve02','large_scale0']
+    let anon_audio_names=["2078-142845-0015","7850-286674-0009","p229_367_mic2","p231_350_mic2","p245_259_mic2","p250_090_mic2","p254_124_mic2","p254_322_mic2","p266_147_mic2","p268_012_mic2","p277_009_mic2","p278_180_mic2","p279_245_mic2","p283_464_mic2","p288_157_mic2"]
+    let anon_head = `
+        <tr>
+          <td style="text-align: center; width: 150px;" rowspan=3><strong>Source Speech<strong></td>
+          <td style="text-align: center; width: 150px;" colspan=6><strong>Methods<strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: center; width: 150px;" rowspan=2>VPC baseline<br><strong>B1.a</strong></td>
+          <td style="text-align: center; width: 150px;" rowspan=2>VPC Top1<br><strong>NWPU-ASLP</strong></td>
+          <td style="text-align: center; width: 150px;" rowspan=1 colspan=4>Proposed <strong>SALT</strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: center; width: 150px;" rowspan=1><strong>B-S0-P0<strong></td>
+          <td style="text-align: center; width: 150px;" rowspan=1><strong>B-S1-P0<strong></td>
+          <td style="text-align: center; width: 150px;" rowspan=1><strong>B-S0-P0.2<strong></td>
+          <td style="text-align: center; width: 150px;" rowspan=1><strong>L-S0-P0<strong></td>
+        </tr>
+        `
+    
+    anon_data=""
+    for (let anon_audio in anon_audio_names){
+      anon_data+='<tr>\n'
+      for (let method in anon_methods){
+        anon_data+=`<td style="text-align: center"><audio style="width: 150px;" controls="" src="raw/samples/common/${anon_methods[method]}/${anon_audio_names[anon_audio]}.wav"></audio></td>`
+      }
+      anon_data+='<tr>\n'
+    }
+
+    let acc_methods=["origin","vpc","base_scale0_preserve02"]
+    let acc_audio_names=['p233_270_mic2','p272_084_mic2','p285_263_mic2','p263_233_mic2','p275_304_mic2']
+    
+    let gt_trans=[
+      "THAT REVIEW WILL LOOK AT MANAGEMENT <span style='color: red'>ACROSS</span>  THE SECTOR AS A WHOLE",
+      "THE <span style='color: red'>GUIDELINES</span> ARE EXPECTED TO BE FINALISED BEFORE NEXT SPRING",
+      "<span style='color: red'>PERHAPS</span> IT'S BECAUSE I HAVEN'T FINISHED THE FIRST TWO RACES",
+      "IN EACH CASE THEY WERE A <span style='color: red'>GOAL DOWN</span>",
+      "THE REPORT WILL GO BEFORE THE <span style='color: red'>SCOTTISH</span> PARLIAMENT PROBABLY IN EARLY AUTUMN",
+    ]
+    // utt methods U2/whisper
+    let transscripts={
+  "p272_084_mic2": {
+    "origin": {
+      "u2": {
+        "wer": "30.0",
+        "rec": "THE GATE LINES ARE EXPECTED TO BE FINALIZED BEFORE NEXT SPRING"
+      },
+      "wh": {
+        "wer": "10.0",
+        "rec": "THE GUIDELINES ARE EXPECTED TO BE FINALIZED BEFORE NEXT SPRING"
+      }
+    },
+    "vpc": {
+      "u2": {
+        "wer": "10.0",
+        "rec": "THE GUIDELINES ARE EXPECTED TO BE FINALIZED BEFORE NEXT SPRING"
+      },
+      "wh": {
+        "wer": "30.0",
+        "rec": "THE GATE LANES ARE EXPECTED TO BE FINALIZED BEFORE NEXT SPRING"
+      }
+    },
+    "base_scale0_preserve02": {
+      "u2": {
+        "wer": "30.0",
+        "rec": "THE GAY LINES ARE EXPECTED TO BE FINALIZED BEFORE NEXT SPRING"
+      },
+      "wh": {
+        "wer": "10.0",
+        "rec": "THE GUIDELINES ARE EXPECTED TO BE FINALIZED BEFORE NEXT SPRING"
+      }
+    }
+  },
+  "p285_263_mic2": {
+    "origin": {
+      "u2": {
+        "wer": "40.0",
+        "rec": "POPS IT'S BECAUSE I HAVEN'T FINISHED THE FUSTY RIS"
+      },
+      "wh": {
+        "wer": "40.0",
+        "rec": "PERHAPS IT IS BECAUSE I HAVE NOT FINISHED THE FIRST TWO RACES"
+      }
+    },
+    "vpc": {
+      "u2": {
+        "wer": "0.0",
+        "rec": "PERHAPS IT'S BECAUSE I HAVEN'T FINISHED THE FIRST TWO RACES"
+      },
+      "wh": {
+        "wer": "50.0",
+        "rec": "PERHAPS IT IS BECAUSE I HAVE NOT FINISHED THE FIRST FEW RACES"
+      }
+    },
+    "base_scale0_preserve02": {
+      "u2": {
+        "wer": "40.0",
+        "rec": "POPS IT'S BECAUSE I HAVEN'T FINISHED THE FUSTY RACE"
+      },
+      "wh": {
+        "wer": "40.0",
+        "rec": "PERHAPS IT IS BECAUSE I HAVE NOT FINISHED THE FIRST TWO RACES"
+      }
+    }
+  },
+  "p263_233_mic2": {
+    "origin": {
+      "u2": {
+        "wer": "37.5",
+        "rec": "IN EACH CASE THERE WERE A GOLDEN"
+      },
+      "wh": {
+        "wer": "12.5",
+        "rec": "IN EACH CASE THERE WERE A GOAL DOWN"
+      }
+    },
+    "vpc": {
+      "u2": {
+        "wer": "25.0",
+        "rec": "IN EACH CASE THEY WERE A GOLDEN"
+      },
+      "wh": {
+        "wer": "62.5",
+        "rec": "AND EACH CASE OF HER A GOLD DOME"
+      }
+    },
+    "base_scale0_preserve02": {
+      "u2": {
+        "wer": "37.5",
+        "rec": "IN EACH CASE THERE WERE A GOLD BONE"
+      },
+      "wh": {
+        "wer": "12.5",
+        "rec": "IN EACH CASE THERE WERE A GOAL DOWN"
+      }
+    }
+  },
+  "p275_304_mic2": {
+    "origin": {
+      "u2": {
+        "wer": "25.0",
+        "rec": "THE REPORT WILL GO BEFORE THIS COAST IS PARLIAMENT PROBABLY IN EARLY AUTUMN"
+      },
+      "wh": {
+        "wer": "0.0",
+        "rec": "THE REPORT WILL GO BEFORE THE SCOTTISH PARLIAMENT PROBABLY IN EARLY AUTUMN"
+      }
+    },
+    "vpc": {
+      "u2": {
+        "wer": "8.33",
+        "rec": "THE REPORT WILL GO BEFORE HIS SCOTTISH PARLIAMENT PROBABLY IN EARLY AUTUMN"
+      },
+      "wh": {
+        "wer": "8.33",
+        "rec": "THE REPORT WILL GO BEFORE SCOTTISH PARLIAMENT PROBABLY IN EARLY AUTUMN"
+      }
+    },
+    "base_scale0_preserve02": {
+      "u2": {
+        "wer": "25.0",
+        "rec": "THE REPORT WILL GO BEFORE YOU DISCUSS HIS PARLIAMENT PROBABLY IN EARLY AUTUMN"
+      },
+      "wh": {
+        "wer": "0.0",
+        "rec": "THE REPORT WILL GO BEFORE THE SCOTTISH PARLIAMENT PROBABLY IN EARLY AUTUMN"
+      }
+    }
+  },
+  "p233_270_mic2": {
+    "origin": {
+      "u2": {
+        "wer": "25.0",
+        "rec": "THAT REVIEW WILL LOOK AT MANAGEMENT TO CROSS THE WHOLE SECTOR AS A WHOLE"
+      },
+      "wh": {
+        "wer": "8.33",
+        "rec": "THAT REVIEW WILL LOOK AT MANAGEMENT ACROSS THE WHOLE SECTOR AS A WHOLE"
+      }
+    },
+    "vpc": {
+      "u2": {
+        "wer": "8.33",
+        "rec": "THAT REVIEW WILL LOOK AT MANAGEMENT ACROSS THE WHOLE SECTOR AS A WHOLE"
+      },
+      "wh": {
+        "wer": "8.33",
+        "rec": "THAT REVIEW WILL LOOK AT MANAGEMENT ACROSS THE WHOLE SECTOR AS A WHOLE"
+      }
+    },
+    "base_scale0_preserve02": {
+      "u2": {
+        "wer": "25.0",
+        "rec": "THAT REVIEW WILL LOOK AT MANAGEMENT TO CROSS THE WHOLE SECTOR AS A WHOLE"
+      },
+      "wh": {
+        "wer": "8.33",
+        "rec": "THAT REVIEW WILL LOOK AT MANAGEMENT ACROSS THE WHOLE SECTOR AS A WHOLE"
+      }
+    }
+  }
+}
+    let acc_head = `
+        <tr>
+          <td style="text-align: center; width: 350px;" rowspan=2><strong>Groundtruth Transcript<strong></td>
+          <td style="text-align: center; width: 350px;" rowspan=2><strong>Source Speech<strong></td>
+          <td style="text-align: center; width: 350px;" colspan=3><strong>Methods<strong></td>
+        </tr>
+        <tr>
+          <td style="text-align: center; width: 350px;" rowspan=1>VPC Top1<br><strong>NWPU-ASLP<strong></td>
+          <td style="text-align: center; width: 350px;" rowspan=1>Proposed <br><strong>SALT::B-S0-P0.2<strong></td>
+        </tr>
+        `
+    acc_data=""
+
+    function process_str(s) {
+      s=s.toLowerCase()
+      s=s.replace("perhaps","Perhaps")
+      return s.charAt(0).toUpperCase() + s.slice(1)+'.';
+    }
+    for (let acc_audio in acc_audio_names){
+      acc_data+=`<tr><td style="text-align: center" rowspan=3>${process_str(gt_trans[acc_audio])}</td>\n`
+      for (let method in acc_methods){
+        console.log(anon_methods[method])
+        trans=transscripts[acc_audio_names[acc_audio]][acc_methods[method]]
+        console.log(trans)
+        acc_data+=`<td style="text-align: center">
+          <strong>U2++Transcription (WER:${trans['u2']['wer']}%)</strong><br>${process_str(trans['u2']['rec'])} <br>
+          <strong>Whisper Large Transcription (WER:${trans['wh']['wer']}%)</strong><br>${process_str(trans['wh']['rec'])}
+        </td>`
+      }
+      acc_data+='<tr>\n'
+      
+      acc_data+='<tr>\n'
+      for (let method in acc_methods){
+        acc_data+=`<td style="text-align: center"><audio style="width: 150px;" controls="" src="raw/samples/accent/${acc_methods[method]}/${acc_audio_names[acc_audio]}.wav"></audio></td>`
+      }
+      acc_data+='<tr>\n'
+    }
+
+
+
+    document.getElementById('tbody').innerHTML = (anon_head+anon_data)
+    document.getElementById('tbody2').innerHTML = (acc_head+acc_data)
+  }
+</script>
