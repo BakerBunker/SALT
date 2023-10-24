@@ -32,11 +32,11 @@ def get_demo(anon:Anonymizer):
                         clear_spk_btn=gr.Button("Clear speakers")
             generate_btn=gr.Button('Run!',variant='primary')
             output_audio=gr.Audio(label='Output')
-        # with gr.Tab('Make speaker pack'):
-        #     upload_file=gr.File(label="Upload speaker wavs in a directory",file_count='directory',file_types=['audio'])
-        #     speaker_name=gr.Textbox(label='Speaker Name')
-        #     gen_pack_btn=gr.Button()
-        #     output_pack_file=gr.File(label="Generated pack file")
+        with gr.Tab('Make speaker pack'):
+            upload_file=gr.File(label="Upload speaker wavs in a directory",file_count='directory',file_types=['audio'])
+            speaker_name=gr.Textbox(label='Speaker Name')
+            gen_pack_btn=gr.Button()
+            output_pack_file=gr.File(label="Generated pack file")
         
         def rand_spk_btn_func(stat):
             sdict=anon.get_random_speaker()
@@ -78,17 +78,17 @@ def get_demo(anon:Anonymizer):
             norm_spk_btn_func,inputs=[state],outputs=[state,weight_json]
         )
 
-        # def gen_pack_btn_func(spk_name:str,paths,progress=gr.Progress()):
-        #     if len(spk_name) == 0:
-        #         gr.Warning("Name string is empty")
-        #         return ''
-        #     p=anon.make_speaker_pack(progress.tqdm(paths),spk_name)
-        #     anon.add_speaker(spk_name,preprocessed_file=p)
-        #     gr.Info(f'Speaker pack saved to {p} and loaded')
-        #     return p,gr.Dropdown(list(anon.pool.keys()),label='Preview speaker')
-        # gen_pack_btn.click(
-        #     gen_pack_btn_func,inputs=[speaker_name,upload_file],outputs=[output_pack_file,spk_dropdown]
-        # )
+        def gen_pack_btn_func(spk_name:str,paths,progress=gr.Progress()):
+            if len(spk_name) == 0:
+                gr.Warning("Name string is empty")
+                return ''
+            p=anon.make_speaker_pack(progress.tqdm([pa.name for pa in paths]),spk_name)
+            anon.add_speaker(spk_name,preprocessed_file=p)
+            gr.Info(f'Speaker pack saved to {p} and loaded')
+            return p,gr.Dropdown(list(anon.pool.keys()),label='Preview speaker')
+        gen_pack_btn.click(
+            gen_pack_btn_func,inputs=[speaker_name,upload_file],outputs=[output_pack_file,spk_dropdown]
+        )
 
         spk_dropdown.change(
             lambda name:(anon.pool[name][2],anon.pool[name][1][0].cpu().numpy()),inputs=spk_dropdown,outputs=spk_sample_audio
