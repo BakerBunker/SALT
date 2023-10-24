@@ -8,7 +8,10 @@ Official code implementation for ASRU23 paper [SALT: Distinguishable Speaker Ano
 
 [[Demo Page](https://bakerbunker.github.io/SALT/)] [[Paper](https://arxiv.org/abs/2310.05051)]
 
-Try it out interactively at colab: <!-- colab badge -->
+Try it out interactively at colab: 
+<a target="_blank" href="https://colab.research.google.com/github/BakerBunker/SALT/blob/main/web_demo.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
 
 ![Model Overview](pics/knnall.png)
 
@@ -24,7 +27,7 @@ unzip librispeech-pack.zip
 3. **Load model**: 
 ```python
 import torch
-anon = torch.hub.load('BakerBunker/SALT','salt', trust_repo=True, pretrained=True, base=False, device='cuda')
+anon = torch.hub.load('BakerBunker/SALT','salt', trust_repo=True, pretrained=True, base=True, device='cuda')
 # base=True if use WavLM-Base as feature extractor
 ```
 1. **Add speakers**:

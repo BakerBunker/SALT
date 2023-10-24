@@ -16,7 +16,7 @@ from matcher import KNeighborsVC
 from anonymizer import Anonymizer
 
 
-def salt(pretrained=True, progress=True, base=False, device="cuda") -> Anonymizer:
+def salt(pretrained=True, progress=True, base=True, device="cuda") -> Anonymizer:
     anonymizer = Anonymizer(knn_vc(pretrained, progress, True, base, device))
     return anonymizer
 
@@ -83,9 +83,10 @@ def wavlm_large(pretrained=True, progress=True, base=False, device="cuda") -> Wa
             progress=progress,
         )
     else:
-        checkpoint = torch.load(
+        checkpoint = torch.hub.load_state_dict_from_url(
             "https://github.com/BakerBunker/SALT/releases/download/1.0.0/WavLM-Base.pt",
             map_location=device,
+            progress=progress,
         )
 
     cfg = WavLMConfig(checkpoint["cfg"])
