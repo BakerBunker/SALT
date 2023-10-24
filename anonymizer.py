@@ -73,9 +73,9 @@ class Anonymizer:
     ):
         self.fake_speakers[name] = speaker_dict
 
-    def make_speaker_pack(self, wavs, name):
-        mset = self.knnvc.get_matching_set(wavs)
+    def make_speaker_pack(self, wavs, name,progress=None):
         wav, sr = torchaudio.load(wavs[0])
+        mset = self.knnvc.get_matching_set(wavs if progress is None else progress(wavs))  
         p=f"assets/{name}.pack"
         torch.save((mset, wav, sr), p)
         print(f'Speaker pack saved to {p}')

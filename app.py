@@ -82,7 +82,7 @@ def get_demo(anon:Anonymizer):
             if len(spk_name) == 0:
                 gr.Warning("Name string is empty")
                 return ''
-            p=anon.make_speaker_pack(progress.tqdm([pa.name for pa in paths]),spk_name)
+            p=anon.make_speaker_pack([pa.name for pa in paths],spk_name,progress=progress.tqdm)
             anon.add_speaker(spk_name,preprocessed_file=p)
             gr.Info(f'Speaker pack saved to {p} and loaded')
             return p,gr.Dropdown(list(anon.pool.keys()),label='Preview speaker')
