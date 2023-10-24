@@ -30,13 +30,17 @@ import torch
 anon = torch.hub.load('BakerBunker/SALT','salt', trust_repo=True, pretrained=True, base=True, device='cuda')
 # base=True if use WavLM-Base as feature extractor
 ```
-1. **Add speakers**:
+4. **Make speaker packs** (Optional)
+```python
+path=anon.make_speaker_pack(['tensor_or_path_to_wav',...],speaker_name)
+```
+5. **Add speakers**:
 ```python
 anon.add_speaker('example',wavs=['tensor_or_path_to_wav',...])
 #OR add .pack file by
 anon.add_speaker('example',preprocessed_file='example.pack')
 ```
-1. **Mix speakers**:
+6. **Mix speakers**:
 ```python
 wav=anon.interpolate(
     'tensor_or_path_to_wav',

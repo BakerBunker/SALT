@@ -76,8 +76,10 @@ class Anonymizer:
     def make_speaker_pack(self, wavs, name):
         mset = self.knnvc.get_matching_set(wavs)
         wav, sr = torchaudio.load(wavs[0])
-        torch.save((mset, wav, sr), f"assets/{name}.pack")
-        return f"assets/{name}.pack"
+        p=f"assets/{name}.pack"
+        torch.save((mset, wav, sr), p)
+        print(f'Speaker pack saved to {p}')
+        return p
 
     def get_random_speaker(self, speakers=4, preservation_factor=0):
         assert speakers > 0 and 0 <= preservation_factor < 1
