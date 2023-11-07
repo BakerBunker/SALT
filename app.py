@@ -15,7 +15,7 @@ def get_demo(anon:Anonymizer):
         with gr.Tab('interpolate'):
             with gr.Row():
                 with gr.Column(variant='compact'):
-                    input_audio_file=gr.Audio(source=['upload','microphone'],type='filepath')
+                    input_audio_file=gr.Audio(sources=['upload','microphone'],type='filepath')
                 with gr.Column(scale=2):
                     weight_json=gr.DataFrame(value=state.value['fake_spk'],label="Speaker Weights",row_count=(4,'dynamic'),col_count=(2,'fixed'),interactive=True)
                     rand_spk_btn=gr.Button('Random speaker')
