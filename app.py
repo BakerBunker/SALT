@@ -15,9 +15,7 @@ def get_demo(anon:Anonymizer):
         with gr.Tab('interpolate'):
             with gr.Row():
                 with gr.Column(variant='compact'):
-                    input_audio_file=gr.Audio(source='upload',type='filepath')
-                    input_audio_mic=gr.Audio(source='microphone',type='filepath')
-                    input_method_check=gr.Checkbox(label='Use microphone as input')
+                    input_audio_file=gr.Audio(source=['upload','microphone'],type='filepath')
                 with gr.Column(scale=2):
                     weight_json=gr.DataFrame(value=state.value['fake_spk'],label="Speaker Weights",row_count=(4,'dynamic'),col_count=(2,'fixed'),interactive=True)
                     rand_spk_btn=gr.Button('Random speaker')
@@ -95,11 +93,11 @@ def get_demo(anon:Anonymizer):
         )
         
 
-        def generate_func(stat,aud_file,aud_mic,method_check):
-            wav=anon.interpolate(aud_mic if method_check else aud_file,stat['fake_spk'])
+        def generate_func(stat,aud_file):
+            wav=anon.interpolate(aud_micaud_file,stat['fake_spk'])
             return 16000,wav.cpu().numpy()
         generate_btn.click(
-            generate_func, inputs=[state,input_audio_file,input_audio_mic,input_method_check],outputs=[output_audio]
+            generate_func, inputs=[state,input_audio_file],outputs=[output_audio]
         )
     
     return demo
