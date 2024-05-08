@@ -94,7 +94,7 @@ def get_demo(anon:Anonymizer):
         
 
         def generate_func(stat,aud_file):
-            wav=anon.interpolate(aud_micaud_file,stat['fake_spk'])
+            wav=anon.interpolate(aud_file,stat['fake_spk'])
             return 16000,wav.cpu().numpy()
         generate_btn.click(
             generate_func, inputs=[state,input_audio_file],outputs=[output_audio]
