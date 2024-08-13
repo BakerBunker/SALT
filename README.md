@@ -48,6 +48,9 @@ wav=anon.interpolate(
     #OR
     # dict with {'speaker':weight},
     topk=4, #K for k-NN
+    # OR use chunked mode for long wav
+    chunksize=5, #5 sec for one chunk
+    padding=0.5, #pad 0.5 sec for head and tail each chunk
 )
 ```
 ## Checkpoints

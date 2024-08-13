@@ -1,5 +1,7 @@
 from pathlib import Path
 import random
+from typing import Optional
+import math
 
 import torch
 from torch import Tensor
@@ -29,19 +31,12 @@ class Anonymizer:
         else:
             raise ValueError("No valid input")
 
-    def interpolate(
+    def _interpolate(
         self,
         wav,
         speaker_dict: pd.DataFrame | dict,
         topk: int = 4,
     ):
-        if isinstance(speaker_dict, dict):
-            speaker_dict = pd.DataFrame.from_dict(
-                {
-                    "speaker": list(speaker_dict.keys()),
-                    "weight": list(speaker_dict.values()),
-                }
-            )
         src_feat = self.knnvc.get_features(wav)
         tgt = torch.zeros_like(src_feat)
         for _, name, weight in speaker_dict.itertuples():
@@ -55,6 +50,42 @@ class Anonymizer:
                     * weight
                 )
         wav = self.knnvc.feat_to_wav(tgt.unsqueeze(0))
+        return wav
+
+    def interpolate(
+        self,
+        wav,
+        speaker_dict: pd.DataFrame | dict,
+        topk: int = 4,
+        chunksize: Optional[float] = None,
+        padding: float = 0.5,
+    ):
+        if isinstance(speaker_dict, dict):
+            speaker_dict = pd.DataFrame.from_dict(
+                {
+                    "speaker": list(speaker_dict.keys()),
+                    "weight": list(speaker_dict.values()),
+                }
+            )
+
+        if chunksize is None:
+            wav = self._interpolate(wav, speaker_dict, topk)
+        else:
+            chunkframe = int(self.knnvc.sr * chunksize)
+            pad_frame = int(self.knnvc.sr * padding)
+            chunks = math.ceil(len(wav) / chunkframe)
+
+            anon_wavs = []
+            for idx in range(chunks):
+                chunk = torch.nn.functional.pad(
+                    wav[idx * chunkframe : (idx + 1) * chunkframe],
+                    (pad_frame, pad_frame),
+                )
+                anon_wavs.append(
+                    self._interpolate(chunk, speaker_dict, topk)[pad_frame:-pad_frame]
+                )
+            wav = torch.cat(anon_wavs)
+
         return wav
 
     def build_fake_speaker(self, speaker_dict: pd.DataFrame, extrapolation_factor=0):

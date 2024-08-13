@@ -16,6 +16,21 @@ def get_demo(anon:Anonymizer):
             with gr.Row():
                 with gr.Column(variant='compact'):
                     input_audio_file=gr.Audio(sources=['upload','microphone'],type='filepath')
+                    use_chunk_mode = gr.Checkbox(label="Use chunk mode")
+                    chunk_size = gr.Slider(
+                        value=10.0,
+                        minimum=10.0,
+                        maximum=20.0,
+                        step=1.0,
+                        label="Seconds for each chunk",
+                    )
+                    pad_sec = gr.Slider(
+                        value=0.5,
+                        minimum=0.2,
+                        maximum=1.0,
+                        step=0.1,
+                        label="Seconds for padding at start and end",
+                    )
                 with gr.Column(scale=2):
                     weight_json=gr.DataFrame(value=state.value['fake_spk'],label="Speaker Weights",row_count=(4,'dynamic'),col_count=(2,'fixed'),interactive=True)
                     rand_spk_btn=gr.Button('Random speaker')
@@ -91,13 +106,19 @@ def get_demo(anon:Anonymizer):
         spk_dropdown.change(
             lambda name:(anon.pool[name][2],anon.pool[name][1][0].cpu().numpy()),inputs=spk_dropdown,outputs=spk_sample_audio
         )
-        
 
-        def generate_func(stat,aud_file):
-            wav=anon.interpolate(aud_file,stat['fake_spk'])
+        def generate_func(stat, aud_file, chunk_mode, chunksize, padsec):
+            wav = anon.interpolate(
+                aud_file,
+                stat["fake_spk"],
+                chunksize=chunksize if chunk_mode else None,
+                padding=padsec,
+            )
             return 16000,wav.cpu().numpy()
         generate_btn.click(
-            generate_func, inputs=[state,input_audio_file],outputs=[output_audio]
+            generate_func,
+            inputs=[state, input_audio_file, use_chunk_mode, chunk_size, pad_sec],
+            outputs=[output_audio],
         )
     
     return demo
