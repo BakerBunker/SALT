@@ -90,7 +90,9 @@ class Anonymizer:
                     (pad_frame, pad_frame),
                 )
                 anon_wavs.append(
-                    self._interpolate(chunk, speaker_dict, topk)[pad_frame:-pad_frame]
+                    self._interpolate(chunk, speaker_dict, topk)[
+                        pad_frame:-pad_frame
+                    ].cpu()
                 )
             wav = torch.cat(anon_wavs)
 
