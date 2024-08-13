@@ -35,7 +35,7 @@ class Anonymizer:
         speaker_dict: pd.DataFrame | dict,
         topk: int = 4,
     ):
-        if speaker_dict is dict:
+        if isinstance(speaker_dict, dict):
             speaker_dict = pd.DataFrame.from_dict(
                 {
                     "speaker": list(speaker_dict.keys()),
