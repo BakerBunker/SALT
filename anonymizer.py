@@ -67,6 +67,14 @@ class Anonymizer:
                     "weight": list(speaker_dict.values()),
                 }
             )
+        if isinstance(wav, str):
+            wav, sr = torchaudio.load(wav)
+            if wav.dim() != 1:
+                wav = wav.mean(0)
+            if self.knnvc.sr != sr:
+                wav = torchaudio.functional.resample(
+                    wav, orig_freq=sr, new_freq=self.knnvc.sr
+                )
 
         if chunksize is None:
             wav = self._interpolate(wav, speaker_dict, topk)
